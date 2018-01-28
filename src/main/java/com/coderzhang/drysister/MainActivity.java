@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SisterApi sisterApi;
     private int curPos = 0; // 当前显示哪一张
     private int page = 1;//页数
+    private GetSisterTask sisterTask;
 
 
     @Override
@@ -42,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setData() {
         data = new ArrayList<>();
-        new GetSisterTask(10).execute();
-        btnNext.performClick();
     }
 
     private void bindViews() {
@@ -69,9 +68,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_switch:
-                page++;
+                sisterTask = new GetSisterTask();
+                sisterTask.execute();
                 Toast.makeText(getApplicationContext(), "已换新一批妹子！", Toast.LENGTH_SHORT).show();
-                new GetSisterTask(page).execute();
                 curPos = 0;
                 break;
             default:
@@ -80,11 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     class GetSisterTask extends AsyncTask<Void, Void, ArrayList<Sister>> {
-        private int page;
-
-        public GetSisterTask(int page) {
-            this.page = page;
-
+        public GetSisterTask() {
         }
 
         @Override
@@ -97,6 +92,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(sisters);
             data.clear();
             data.addAll(sisters);
+            page++;
         }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            sisterTask = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sisterTask.cancel(true);
     }
 }
