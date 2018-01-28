@@ -65,7 +65,7 @@ public class SisterApi {
             outputStream.write(buffer, 0, len);
         }
         inputStream.close();
-        Log.v(TAG, "字节数组的长度：" + outputStream.toString().length());
+//        Log.v(TAG, "字节数组的长度：" + outputStream.toString().length());
         return outputStream.toByteArray();
     }
 
@@ -93,7 +93,7 @@ public class SisterApi {
             sister.setUsed(results.getBoolean("used"));
             sisters.add(sister);
         }
-        Log.v(TAG, "json解析返回的集合大小：" + sisters.size() + "");
+//        Log.v(TAG, "json解析返回的集合大小：" + sisters.size() + "");
         return sisters;
     }
 
