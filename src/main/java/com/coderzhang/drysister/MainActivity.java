@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_switch:
+                Toast.makeText(getApplicationContext(), "已换新一批妹子！", Toast.LENGTH_SHORT).show();
                 sisterTask = new GetSisterTask();
                 sisterTask.execute();
-                Toast.makeText(getApplicationContext(), "已换新一批妹子！", Toast.LENGTH_SHORT).show();
                 curPos = 0;
                 break;
             default:
