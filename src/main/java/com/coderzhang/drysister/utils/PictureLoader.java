@@ -1,4 +1,4 @@
-package com.coderzhang.drysister;
+package com.coderzhang.drysister.utils;
 
 
 import android.graphics.Bitmap;

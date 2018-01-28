@@ -1,4 +1,4 @@
-package com.coderzhang.drysister;
+package com.coderzhang.drysister.entity;
 
 /**
  * Created by z on 2018/01/27.

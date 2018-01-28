@@ -1,4 +1,4 @@
-package com.coderzhang.drysister;
+package com.coderzhang.drysister.activity;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +9,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import org.json.JSONException;
+import com.coderzhang.drysister.utils.PictureLoader;
+import com.coderzhang.drysister.R;
+import com.coderzhang.drysister.entity.Sister;
+import com.coderzhang.drysister.api.SisterApi;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -61,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (curPos > 9) {
                         curPos = 0;
                     }
-                    loader.loadImage(imageView, data.get(curPos).getUrl());
+                    Picasso.with(getApplicationContext()).load(data.get(curPos).getUrl()).into(imageView);
+                    //loader.loadImage(imageView, data.get(curPos).getUrl());
                     curPos++;
                 } else {
                     Log.v(TAG, "集合为空");

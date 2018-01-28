@@ -1,18 +1,16 @@
-package com.coderzhang.drysister;
+package com.coderzhang.drysister.api;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
+import com.coderzhang.drysister.entity.Sister;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
