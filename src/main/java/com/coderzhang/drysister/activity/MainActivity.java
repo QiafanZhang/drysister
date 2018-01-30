@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.coderzhang.drysister.R;
+import com.coderzhang.drysister.db.SisterDBHelper;
 import com.coderzhang.drysister.entity.Sister;
 import com.coderzhang.drysister.api.SisterApi;
 import com.coderzhang.drysister.utils.Permissions;
@@ -39,21 +40,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "NetWork";
     private static final int REQUEST_CODE = 1;
     private ImageView imageView;
-    private Button btnNext, btnSwitch;
+    private Button btnPre, btnNext, btnSwitch;
     private ArrayList<Sister> data;
-    //    private PictureLoader loader;
     private SisterApi sisterApi;
     private int curPos = 0; // 当前显示哪一张
     private int page = 1;//页数
     private GetSisterTask sisterTask;
+    private SisterDBHelper dbHelper;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        loader = new PictureLoader();
         sisterApi = new SisterApi();
+        dbHelper = SisterDBHelper.getInstance(getApplicationContext());
         bindViews();
         checkPermissions();
         setData();
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void checkPermissions() {
         Permissions.check(getApplicationContext(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_NETWORK_STATE},
                 this, REQUEST_CODE);
     }
 
@@ -83,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void saveImage() {
-
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -115,22 +115,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void bindViews() {
         imageView = findViewById(R.id.image_view);
         btnNext = findViewById(R.id.btn_next);
+        btnPre = findViewById(R.id.btn_previous);
         btnSwitch = findViewById(R.id.btn_switch);
         btnNext.setOnClickListener(this);
+        btnPre.setOnClickListener(this);
         btnSwitch.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_next:
+            case R.id.btn_previous:
                 if (data != null && !data.isEmpty()) {
-                    if (curPos > 9) {
-                        curPos = 0;
+                    if (curPos == 0) {
+                        //当前图片索引为0时 隐藏btn_pre
+                        btnPre.setVisibility(View.INVISIBLE);
                     }
-                    Picasso.with(getApplicationContext()).load(data.get(curPos).getUrl()).into(imageView);
-                    //loader.loadImage(imageView, data.get(curPos).getUrl());
-                    curPos++;
+
+                    if (curPos == data.size() - 1) {
+                        //最后一个 重新new Task
+
+                    } else if (curPos < data.size()) {
+                        //当前图片位置在总索引内
+                        //获得索引加载图片
+                        Picasso.with(getApplicationContext()).load(data.get(curPos).getUrl()).into(imageView);
+                    }
+                    curPos--;
+                } else {
+                    Log.v(TAG, "集合为空");
+                }
+                break;
+            case R.id.btn_next:
+                btnPre.setVisibility(View.VISIBLE);
+                if (data != null && !data.isEmpty()) {
+                    if (curPos < data.size()) {
+                        ////当前图片的位置在总索引内 索引++
+                        curPos++;
+                    }
+                    if (curPos > data.size() - 1) {
+                        //当前图片的位置大于最大大小时
+                        curPos = 0;
+                    } else if (curPos < data.size()) {
+                        //当前图片的位置在总索引内
+                        Picasso.with(getApplicationContext()).load(data.get(curPos).getUrl()).into(imageView);
+                    }
+
                 } else {
                     Log.v(TAG, "集合为空");
                 }

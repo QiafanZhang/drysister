@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">drysister</string>
-    <string name="btn_get">get</string>
     <string name="btn_switch">换一批</string>
+    <string name="btn_pre">上一个</string>
+    <string name="btn_next">下一个</string>
 </resources>
