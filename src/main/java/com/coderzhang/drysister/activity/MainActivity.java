@@ -1,21 +1,11 @@
 package com.coderzhang.drysister.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,15 +15,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.coderzhang.drysister.R;
-import com.coderzhang.drysister.db.SisterDBHelper;
 import com.coderzhang.drysister.entity.Sister;
 import com.coderzhang.drysister.api.SisterApi;
-import com.coderzhang.drysister.utils.Permissions;
-import com.coderzhang.drysister.utils.Save2SD;
+import com.coderzhang.drysister.utils.PermissionsUtils;
+import com.coderzhang.drysister.utils.Save2SDUtils;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -46,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int curPos = 0; // 当前显示哪一张
     private int page = 1;//页数
     private GetSisterTask sisterTask;
-    private SisterDBHelper dbHelper;
 
 
     @Override
@@ -54,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sisterApi = new SisterApi();
-        dbHelper = SisterDBHelper.getInstance(getApplicationContext());
         bindViews();
         checkPermissions();
         setData();
@@ -62,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void checkPermissions() {
-        Permissions.check(getApplicationContext(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        PermissionsUtils.check(getApplicationContext(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_NETWORK_STATE},
                 this, REQUEST_CODE);
     }
@@ -91,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 builder.setTitle("保存吗?").setPositiveButton("好", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        boolean state = Save2SD.save(data.get(curPos).getDesc(), imageView, getApplicationContext());
+                        boolean state = Save2SDUtils.save(data.get(curPos).getDesc(), imageView, getApplicationContext());
                         if (state) {
                             Toast.makeText(getApplicationContext(), "保存成功！", Toast.LENGTH_SHORT).show();
                         } else
@@ -129,13 +114,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (data != null && !data.isEmpty()) {
                     if (curPos == 0) {
                         //当前图片索引为0时 隐藏btn_pre
-                        btnPre.setVisibility(View.INVISIBLE);
+                        btnPre.setVisibility(View.GONE);
                     }
-
-                    if (curPos == data.size() - 1) {
-                        //最后一个 重新new Task
-
-                    } else if (curPos < data.size()) {
+                    if (curPos < data.size()) {
                         //当前图片位置在总索引内
                         //获得索引加载图片
                         Picasso.with(getApplicationContext()).load(data.get(curPos).getUrl()).into(imageView);
@@ -159,20 +140,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //当前图片的位置在总索引内
                         Picasso.with(getApplicationContext()).load(data.get(curPos).getUrl()).into(imageView);
                     }
-
                 } else {
-                    Log.v(TAG, "集合为空");
+
                 }
                 break;
             case R.id.btn_switch:
-                Toast.makeText(getApplicationContext(), "已换新一批妹子！", Toast.LENGTH_SHORT).show();
-                sisterTask = new GetSisterTask();
-                sisterTask.execute();
-                curPos = 0;
+                executeTask();
+                if (data.size() == 0 || data.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "没找到任何小姐姐呢", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "找到新的小姐姐！", Toast.LENGTH_SHORT).show();
+                    curPos = 0;
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    private void executeTask() {
+        sisterTask = new GetSisterTask();
+        sisterTask.execute();
     }
 
     class GetSisterTask extends AsyncTask<Void, Void, ArrayList<Sister>> {

@@ -1,4 +1,4 @@
-package com.coderzhang.drysister;
+package com.coderzhang.drysister.db;
 
 /**
  * Created by z on 2018/01/29.

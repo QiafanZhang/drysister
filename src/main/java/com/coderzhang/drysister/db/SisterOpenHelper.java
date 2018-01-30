@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.coderzhang.drysister.TableDefine;
-
 /**
  * Created by z on 2018/01/29.
  */

@@ -17,7 +17,7 @@ import java.io.FileOutputStream;
  * Created by z on 2018/01/28.
  */
 
-public class Save2SD {
+public class Save2SDUtils {
     public static boolean save(String fileName, ImageView imageView, Context context) {
         Drawable drawable = imageView.getDrawable();
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || drawable != null) {

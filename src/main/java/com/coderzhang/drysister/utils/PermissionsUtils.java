@@ -11,7 +11,7 @@ import android.support.v4.content.ContextCompat;
  * Created by z on 2018/01/28.
  */
 
-public class Permissions {
+public class PermissionsUtils {
     public static boolean check(Context context, String[] permissions, Activity activity, int requestCode) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             boolean allGranted = checkPermissionAllGranted(context, permissions);
